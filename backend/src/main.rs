@@ -29,21 +29,42 @@ fn classify_location(location: &str) -> (LocationCategory, Option<i32>) {
 
     let mut chars = location.chars().peekable();
     while let Some(c) = chars.next() {
-        if c.is_alphabetic() {
-            match c {
-                'I' => category = LocationCategory::IBlock,
-                'F' => category = LocationCategory::FBlock,
-                'G' => category = LocationCategory::GBlock,
-                'H' => category = LocationCategory::HBlock,
+        let c_lower = c.to_ascii_lowercase();
+        if c_lower.is_alphabetic() {
+            match c_lower {
+                'i' => {
+                    category = LocationCategory::IBlock;
+                    driver = Some(1);
+                }
+                'f' => {
+                    category = LocationCategory::FBlock;
+                    driver = Some(2);
+                }
+                'g' => {
+                    category = LocationCategory::GBlock;
+                    driver = Some(3);
+                }
+                'h' => {
+                    category = LocationCategory::HBlock;
+                    driver = Some(4);
+                }
                 _ => (),
             }
-            // Check if there's a number after the letter
-            if let Some(next) = chars.peek() {
+
+            // Continue to process remaining data
+
+            while let Some(next) = chars.next() {
                 if next.is_numeric() {
-                    driver = Some(next.to_digit(10).unwrap() as i32);
+                    // assign the numeric character to the same driver determined by the alpahbet
+                    driver = Some(driver.unwrap_or(1));
                     break;
                 }
             }
+            // printing all the values that driver has been assigned.
+            // Print details before returning
+            println!("Category: {:?}, Driver: {:?}", category, driver);
+            // Break the loop once processing is done
+            break;
         }
     }
 
@@ -87,4 +108,3 @@ fn main() {
     println!("Quantity: {}", input.quantity);
     println!("Floor: {}", input.floor);
 }
-
